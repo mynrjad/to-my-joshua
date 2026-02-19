@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enishi | For Joshua</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Noto+Serif+JP:wght@200;500;900&family=Noto+Sans+JP:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #fdfdfb;
+            --ink: #1a1a1a;
+            --red: #af1d1d;
+            --soft-red: #fef2f2;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: var(--bg);
+            color: var(--ink);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .font-serif { font-family: 'Noto Serif JP', serif; }
+        .font-elegant { font-family: 'Cormorant Garamond', serif; }
+
+        /* Falling Sakura Canvas */
+        #sakura-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Experience Start Overlay */
+        .experience-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1s ease;
+        }
+
+        /* Horizontal Scroll Gallery */
+        .gallery-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding: 2rem 1rem;
+            gap: 2rem;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .gallery-container::-webkit-scrollbar { display: none; }
+
+        .milestone-card {
+            flex: 0 0 85vw;
+            max-width: 400px;
+            scroll-snap-align: center;
+            background: white;
+            border: 1px solid #f0f0f0;
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            position: relative;
+            min-height: 500px;
+        }
+
+        @media (min-width: 768px) {
+            .milestone-card { flex: 0 0 350px; }
+        }
+
+        .milestone-card:hover {
+            border-color: var(--red);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(175, 29, 29, 0.05);
+        }
+
+        /* Ambient Elements */
+        .vertical-text {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+
+        .reason-stamp {
+            aspect-ratio: 1;
+            border: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            transition: all 0.3s ease;
+            background: white;
+            cursor: pointer;
+        }
+        .reason-stamp:hover {
+            border-color: var(--red);
+            color: var(--red);
+            background: var(--soft-red);
+        }
+
+        .line-decoration {
+            width: 1px;
+            height: 100px;
+            background: linear-gradient(to bottom, var(--red), transparent);
+        }
+
+        /* Modal styling */
+        .modal-bg {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            cursor: pointer; /* Suggests clicking anywhere closes it */
+        }
+    </style>
+</head>
+<body class="selection:bg-red-100">
+
+    <canvas id="sakura-canvas"></canvas>
+
+    <!-- Experience Start Overlay -->
+    <div id="startOverlay" class="experience-overlay">
+        <div class="h-24 w-24 border border-red-700 flex items-center justify-center text-red-700 font-serif font-bold mb-12">愛</div>
+        <button onclick="startExperience()" class="px-8 py-3 border border-red-700 text-red-700 uppercase tracking-[0.4em] text-xs font-bold hover:bg-red-700 hover:text-white transition-all duration-500">
+            Open the Journey
+        </button>
+        <p class="mt-8 text-[10px] tracking-widest text-stone-400 uppercase italic">A story between two souls</p>
+    </div>
+
+    <main class="relative z-10 opacity-0 transition-opacity duration-1000" id="mainContent">
+        
+        <!-- Hero -->
+        <section class="min-h-screen flex flex-col justify-center items-center px-6 text-center">
+            <div class="mb-12 photo-container">
+                <div class="relative p-3 bg-white shadow-xl border border-stone-100 rotate-[-2deg]">
+                    <img src="https://github.com/mynrjad/to-my-joshua/blob/main/626318186_3111128279091122_971446240082617298_n.jpg?raw=true" 
+                         alt="Us" class="w-56 md:w-64 grayscale-[20%]"
+                         onerror="this.src='https://images.unsplash.com/photo-1522673607200-164883eecd0c?auto=format&fit=crop&q=80&w=800'">
+                </div>
+            </div>
+            
+            <h1 class="text-7xl md:text-[10rem] font-elegant font-light tracking-tight mb-4 italic">
+                Enishi<span class="text-red-700 not-italic">.</span>
+            </h1>
+            <p class="text-stone-400 text-[10px] tracking-[0.5em] uppercase mb-16">緣 • The Thread of Connection</p>
+            
+            <div class="flex flex-col items-center gap-6">
+                <div class="line-decoration"></div>
+                <p class="text-[10px] tracking-[0.4em] uppercase font-bold text-red-800 animate-pulse">Scroll to explore</p>
+            </div>
+        </section>
+
+        <!-- The Journey Gallery -->
+        <section class="py-20 overflow-hidden">
+            <div class="px-8 md:px-24 mb-12">
+                <h2 class="text-3xl font-serif font-bold text-stone-800">The Twelve Chapters</h2>
+                <div class="w-12 h-px bg-red-700 mt-4"></div>
+            </div>
+            
+            <div class="gallery-container" id="galleryList">
+                <!-- Milestones injected here -->
+            </div>
+        </section>
+
+        <!-- Reasons Section -->
+        <section class="py-32 px-6 bg-stone-50/50 border-y border-stone-100">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
+                    <div class="max-w-md">
+                        <h2 class="text-4xl font-serif font-bold mb-4">The Reasons</h2>
+                        <p class="text-stone-400 text-xs uppercase tracking-widest leading-loose text-balance">A curated hundred reflections of my devotion. Dedicated to Joshua.</p>
+                    </div>
+                    <div class="text-red-700 font-serif text-6xl">100</div>
+                </div>
+
+                <div class="grid grid-cols-5 sm:grid-cols-10 gap-2 md:gap-4" id="reasonsGrid">
+                    <!-- Reasons injected here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Footer -->
+        <footer class="py-40 text-center">
+            <div class="w-12 h-12 border border-red-700 flex items-center justify-center text-red-700 font-serif font-bold mx-auto mb-8">愛</div>
+            <p class="text-stone-400 text-[10px] tracking-[0.6em] uppercase font-bold">Forever & Always yours.</p>
+        </footer>
+    </main>
+
+    <!-- Detailed Reason Modal -->
+    <div id="modal" class="fixed inset-0 z-[300] hidden flex items-center justify-center p-6 modal-bg">
+        <div class="max-w-xl w-full text-center pointer-events-none"> <!-- content ignores clicks so they bubble to parent -->
+            <button class="absolute top-10 right-10 text-stone-400 uppercase text-[10px] tracking-widest">Close</button>
+            <span id="modalTag" class="text-red-700 text-[9px] tracking-[0.5em] uppercase font-bold mb-4 block">Archive</span>
+            <h3 id="modalTitle" class="text-4xl font-serif font-bold mb-10 text-stone-800 italic border-b border-stone-100 pb-8">Reason</h3>
+            <p id="modalBody" class="text-stone-500 font-light text-xl md:text-2xl leading-relaxed italic px-4"></p>
+            <div class="mt-20 w-8 h-px bg-red-700 mx-auto"></div>
+        </div>
+    </div>
+
+    <script>
+        const milestones = [
+            { title: "GitHub Field Day", desc: "Where the source code of our lives first aligned. Among a sea of faces, yours was the only one that felt like home.", tag: "Ch. 01" },
+            { title: "First Date in Glorietta", desc: "The mall felt like a sanctuary where only we existed. I still remember the specific nervousness and how easily you made it fade away.", tag: "Ch. 02" },
+            { title: "Meeting Your Parents", desc: "A profound moment of belonging. Stepping into your world and understanding the beautiful roots of the man I love.", tag: "Ch. 03" },
+            { title: "HyperX Headset", desc: "My first gift to you. I wanted you to hear the clarity of your world, just as I hear every beat of your heart.", tag: "Ch. 04" },
+            { title: "Our First Staycation", desc: "Quiet city lights and shared silence. We learned that being home isn't about a place, but about being together.", tag: "Ch. 05" },
+            { title: "Our First Drinks", desc: "At Xylo, celebrating GitHub. Toasting to the platform that brought us together and the love that kept us connected.", tag: "Ch. 06" },
+            { title: "First Valentine's", desc: "Dunkin Donuts and sweet simplicity. Proof that a love as deep as ours doesn't need grand gestures, just shared moments.", tag: "Ch. 07" },
+            { title: "First Anniversary", desc: "Shakey's and my Snoopy shirt. One full cycle around the sun, and realizing I would choose you again in every lifetime.", tag: "Ch. 08" },
+            { title: "Our First Fight", desc: "Surviving the friction that polished our bond. We learned how to heal, how to listen, and how to stay when things are hard.", tag: "Ch. 09" },
+            { title: "Singapore Together", desc: "Exploring the Lion City side-by-side. Seeing the world through your eyes made every landmark feel like a miracle.", tag: "Ch. 10" },
+            { title: "First Speakership", desc: "Hacktoberfest GitHub. Partners in tech and in life. Sharing our stage and our story with the world.", tag: "Ch. 11" },
+            { title: "The First Perfume", desc: "Club De Nuit. A fragrance that has become a key, unlocking a rush of early memories every time I catch its scent.", tag: "Ch. 12" }
+        ];
+
+        const reasons = [
+            "The way you always come to my rescue whenever the world feels a bit too heavy for me to carry.",
+            "How you spoil me with the smallest gestures that show you were thinking of me all along.",
+            "The Guerlain gift—a scent that now carries the memory of your thoughtfulness.",
+            "The blue Lego flowers you gave me; they are a beautiful, permanent reminder of our blooming love.",
+            "The way you gifted me my favorite compact, proving you pay attention to the tiniest details.",
+            "The collection of bags you've given me, each one holding a special memory of a time you wanted to see me smile.",
+            "How you never stop trying to better yourself, growing every day into a man I am so proud to call mine.",
+            "The way you took care of me in Hong Kong, navigating the unknown so I could just focus on being happy.",
+            "How you make sure I get home safe, no matter where we are or how late the hour is.",
+            "The beautiful reality that you aren't hard to love at all; in fact, it's the most natural thing in the world.",
+            "The way you rescue me from my own overthinking with just a few calm, reassuring words.",
+            "How you spoil me by remembering exactly how I like my coffee or my favorite snacks.",
+            "The way you carried our heavy bags through the streets of Hong Kong without a single complaint.",
+            "The peace of mind I have knowing you're always checking in to make sure I'm safe.",
+            "The constant effort you put into improving our communication and understanding of one another.",
+            "The way you spoil my appetite with the best dinners and shared desserts.",
+            "How you rescue me from social fatigue by knowing exactly when I need to leave a room.",
+            "The blue Lego flowers sitting in my room as a testament to the patience we share.",
+            "The way you better yourself professionally, inspiring me to reach for my own goals.",
+            "How you make sure I'm on the safe side of the sidewalk whenever we walk together.",
+            "Because your soul is so gentle that loving you is as effortless as breathing.",
+            "The way you rescue me from tech troubles, always patient with my questions.",
+            "How you spoil me with quiet mornings and the luxury of just being present with you.",
+            "The Guerlain scent that now marks the moments where I feel most cherished.",
+            "How you handled every detail of our Hong Kong trip so I could feel like a queen.",
+            "The way you wait at the door until you're sure I'm safe and sound inside.",
+            "How you constantly refine your character to be the partner I deserve.",
+            "Because you never make me feel like I am too much to handle.",
+            "The way you rescue my mood by knowing exactly which joke will make me laugh.",
+            "How you spoil me by prioritizing my comfort over your own convenience.",
+            "The favorite compact that I use every day, thinking of the moment you handed it to me.",
+            "How you took the lead in Singapore and Hong Kong so I never had to worry about the path.",
+            "The way you make sure I'm home safe before you let yourself rest.",
+            "Because your love is a sanctuary that never feels like a chore.",
+            "The way you rescue me from silence with the most meaningful conversations.",
+            "The way the blue Lego flowers represent the way we built our life piece by piece.",
+            "How you spoil me with words of affirmation that stay with me all day.",
+            "The way you've bettered your patience, making our relationship so much stronger.",
+            "How you kept me safe and hydrated during our busiest travel days.",
+            "Because you are truly my hero in the most understated, beautiful ways.",
+            "The way you rescue me from my doubts by believing in me more than I do.",
+            "How you spoil me by listening to my longest stories with genuine interest.",
+            "The Guerlain gift that taught me what it feels like to be truly seen.",
+            "How you've grown into a more resilient man for the sake of our future.",
+            "The way you always ensure my safety is the first priority in every plan.",
+            "Because loving you is the most peaceful part of my day.",
+            "The way you rescue me from the cold with your jackets and your warmth.",
+            "How you spoil me with surprises that are exactly what I needed but didn't ask for.",
+            "The way you carried the load in Hong Kong so my only job was to take photos.",
+            "How you've bettered your heart to be a place of endless kindness.",
+            "The way you make sure I get home safe, proving your love is a protective shield.",
+            "Because you are easy to love, even on the days we find difficult.",
+            "The way you rescue me from a bad day with just a long, quiet hug.",
+            "How you spoil me by always taking my side when the world is against me.",
+            "The blue Lego flowers that signify a love that never wilts.",
+            "How you've bettered your understanding of my world and my passions.",
+            "The protection I feel in your presence, whether we are home or in a foreign city.",
+            "The way you always walk me to the car and wait for the engine to start.",
+            "Because you make feel like the lucky woman alive without even trying.",
+            "The way you rescue me from boredom with your sense of adventure.",
+            "How you spoil me by noticing the smallest changes in my mood or my hair.",
+            "The favorite compact that reminds me of your immense generosity.",
+            "How you bettered your communication so we never have to stay in an argument.",
+            "The way you looked out for me in every crowd in Hong Kong.",
+            "Because you are my best friend, and that makes loving you a joy.",
+            "How you rescue me from my own mistakes with nothing but grace.",
+            "The way you spoil me by making me feel like the center of your universe.",
+            "The Guerlain scent that I wear when I want to feel closer to you.",
+            "How you've bettered your focus on our shared dreams.",
+            "The way you check my location just to be sure I'm exactly where I should be.",
+            "Because you are not just a partner, but my constant protector.",
+            "The way you rescue me from my fears by holding my hand through them.",
+            "How you spoil me with your loyalty that never wavers.",
+            "The blue Lego flowers that symbolize our creative and playful bond.",
+            "How you've bettered your life to ensure we have the best foundation.",
+            "The way you make Hong Kong and Singapore feel like home because you are there.",
+            "How you always ensure I get home safe, no matter the distance.",
+            "Because you are gentle, kind, and incredibly easy to love.",
+            "The way you rescue me from the mundane by making every day special.",
+            "How you spoil me with your deep, quiet wisdom.",
+            "The collection of bags that are more than accessories—they are trophies of your care.",
+            "How you better yourself every day, and I get to fall in love with the new versions of you.",
+            "The way you ensured I never felt unsafe while we were traveling together.",
+            "Because your love is the anchor that keeps me grounded.",
+            "How you rescue me from my own shadows with your light.",
+            "How you spoil me by always being the one I can count on.",
+            "The blue Lego flowers that remind me of your quirky, lovely heart.",
+            "How you bettered your soul to be the kindest person I know.",
+            "The way you looked after me during the long flights and late nights.",
+            "How you always make sure I am safe before you close your eyes.",
+            "Because you are my everything, and loving you is a privilege.",
+            "The way you rescue my heart, over and over again.",
+            "How you spoil me with a love that is pure, deep, and true.",
+            "The Guerlain, the compact, and the flowers—all pieces of your heart.",
+            "How you've bettered our story by simply being in it.",
+            "The way you were my guide through every street in Hong Kong.",
+            "Because you make the world a safer place for me.",
+            "How you always get me home safe, as if it's your most important mission.",
+            "Because you are Joshua, and you are far from hard to love.",
+            "Because I am yours, and you are mine, and that is enough for a lifetime."
+        ];
+
+        // Initialize Content
+        function setup() {
+            const gallery = document.getElementById('galleryList');
+            milestones.forEach((m, i) => {
+                const card = document.createElement('div');
+                card.className = 'milestone-card group';
+                card.innerHTML = `
+                    <span class="text-red-700 text-[9px] tracking-[0.4em] uppercase font-bold mb-8">${m.tag}</span>
+                    <h3 class="text-3xl font-serif font-bold mb-6 text-stone-800 transition-colors group-hover:text-red-700">${m.title}</h3>
+                    <p class="text-stone-400 font-light text-sm leading-relaxed">${m.desc}</p>
+                    <div class="mt-auto flex justify-between items-end">
+                        <div class="vertical-text text-stone-100 font-serif text-5xl select-none group-hover:text-red-50 transition-colors">物語</div>
+                        <div class="text-[10px] text-stone-200 font-bold tracking-widest">NO. ${(i+1)}</div>
+                    </div>
+                `;
+                gallery.appendChild(card);
+            });
+
+            const grid = document.getElementById('reasonsGrid');
+            reasons.forEach((r, i) => {
+                const stamp = document.createElement('div');
+                stamp.className = 'reason-stamp font-serif';
+                stamp.innerText = (i + 1).toString().padStart(2, '0');
+                stamp.onclick = () => openModal(r, i + 1);
+                grid.appendChild(stamp);
+            });
+        }
+
+        // Interaction Control
+        function startExperience() {
+            document.getElementById('startOverlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('startOverlay').classList.add('hidden');
+                document.getElementById('mainContent').classList.remove('opacity-0');
+            }, 1000);
+        }
+
+        function openModal(text, num) {
+            const modal = document.getElementById('modal');
+            document.getElementById('modalBody').innerText = text;
+            document.getElementById('modalTag').innerText = `Entry #${num}`;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Logic to close modal by clicking anywhere on it
+        const modalEl = document.getElementById('modal');
+        modalEl.addEventListener('click', () => closeModal());
+
+        // Ambient Sakura
+        const canvas = document.getElementById('sakura-canvas');
+        const ctx = canvas.getContext('2d');
+        let petals = [];
+
+        class Petal {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height - canvas.height;
+                this.size = Math.random() * 5 + 2;
+                this.speed = Math.random() * 0.8 + 0.3;
+                this.angle = Math.random() * 360;
+                this.spin = Math.random() * 0.1 - 0.05;
+                this.opacity = Math.random() * 0.3 + 0.1;
+            }
+            update() {
+                this.y += this.speed;
+                this.x += Math.sin(this.y / 60);
+                this.angle += this.spin;
+                if (this.y > canvas.height) {
+                    this.y = -10;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                ctx.beginPath();
+                ctx.ellipse(0, 0, this.size, this.size / 2, 0, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(175, 29, 29, ${this.opacity})`;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            petals = Array.from({ length: 40 }, () => new Petal());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            petals.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', resize);
+        resize(); animate(); setup();
+        
+        window.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeModal(); });
+    </script>
+</body>
+</html>
